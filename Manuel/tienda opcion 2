@@ -1,0 +1,427 @@
+import json
+from datetime import datetime
+
+# =====================================================
+# CLASE PRODUCTO
+# =====================================================
+
+class Producto:
+    def __init__(self, id_producto, nombre, marca, categoria, precio, stock):
+        self.id_producto = id_producto
+        self.nombre = nombre
+        self.marca = marca
+        self.categoria = categoria
+        self.precio = precio
+        self.stock = stock
+
+    def to_dict(self):
+        return {
+            "id_producto": self.id_producto,
+            "nombre": self.nombre,
+            "marca": self.marca,
+            "categoria": self.categoria,
+            "precio": self.precio,
+            "stock": self.stock
+        }
+
+    def __str__(self):
+        return (
+            f"ID:{self.id_producto} | {self.nombre} | "
+            f"{self.marca} | {self.categoria} | "
+            f"${self.precio} | Stock:{self.stock}"
+        )
+
+
+# =====================================================
+# CLASE CLIENTE
+# =====================================================
+
+class Cliente:
+    def __init__(self, id_cliente, nombre, email):
+        self.id_cliente = id_cliente
+        self.nombre = nombre
+        self.email = email
+
+    def to_dict(self):
+        return {
+            "id_cliente": self.id_cliente,
+            "nombre": self.nombre,
+            "email": self.email
+        }
+
+
+# =====================================================
+# CLASE PEDIDO
+# =====================================================
+
+class Pedido:
+    def __init__(self, id_pedido, id_cliente, productos, fecha=None):
+        self.id_pedido = id_pedido
+        self.id_cliente = id_cliente
+        self.productos = [p.strip() for p in productos]
+        self.fecha = fecha or datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+
+    def to_dict(self):
+        return {
+            "id_pedido": self.id_pedido,
+            "id_cliente": self.id_cliente,
+            "productos": self.productos,
+            "fecha": self.fecha
+        }
+
+
+# =====================================================
+# SISTEMA
+# =====================================================
+
+class SistemaGestion:
+
+    def __init__(self):
+        self.productos = {}
+        self.clientes = {}
+        self.pedidos = {}
+        self.contador_pedidos = 1
+
+    def cargar_ejemplos(self):
+        self.productos["P001"] = Producto(
+            "P001", "Smartphone X", "BrandA",
+            "Smartphones", 499.99, 10
+        )
+
+        self.productos["P002"] = Producto(
+            "P002", "Laptop Pro", "BrandB",
+            "Laptops", 999.99, 5
+        )
+
+        self.clientes["C001"] = Cliente(
+            "C001", "Juan Perez", "juan@example.com"
+        )
+
+        self.clientes["C002"] = Cliente(
+            "C002", "Maria Lopez", "maria@example.com"
+        )
+
+    # =================================================
+    # PRODUCTOS
+    # =================================================
+
+    def registrar_producto(self):
+
+        id_producto = input("ID: ").strip()
+
+        if id_producto in self.productos:
+            print("Producto ya existe")
+            return
+
+        nombre = input("Nombre: ")
+        marca = input("Marca: ")
+        categoria = input("Categoria: ")
+
+        try:
+            precio = float(input("Precio: "))
+            stock = int(input("Stock: "))
+        except ValueError:
+            print("Datos invalidos")
+            return
+
+        self.productos[id_producto] = Producto(
+            id_producto,
+            nombre,
+            marca,
+            categoria,
+            precio,
+            stock
+        )
+
+        print("Producto registrado")
+
+    def actualizar_producto(self):
+
+        id_producto = input("ID producto: ")
+
+        if id_producto not in self.productos:
+            print("Producto no encontrado")
+            return
+
+        producto = self.productos[id_producto]
+
+        producto.nombre = input("Nuevo nombre: ")
+        producto.marca = input("Nueva marca: ")
+        producto.categoria = input("Nueva categoria: ")
+
+        try:
+            producto.precio = float(input("Nuevo precio: "))
+            producto.stock = int(input("Nuevo stock: "))
+        except ValueError:
+            print("Datos invalidos")
+            return
+
+        print("Producto actualizado")
+
+    def eliminar_producto(self):
+
+        id_producto = input("ID producto: ")
+
+        if id_producto in self.productos:
+            del self.productos[id_producto]
+            print("Producto eliminado")
+        else:
+            print("Producto no encontrado")
+
+    def buscar_producto(self):
+
+        nombre = input("Buscar: ").lower()
+
+        for producto in self.productos.values():
+
+            if nombre in producto.nombre.lower():
+                print(producto)
+
+    def listar_productos(self):
+
+        print("\n===== PRODUCTOS =====")
+
+        for producto in self.productos.values():
+            print(producto)
+
+    def comparar_productos(self):
+
+        id1 = input("ID primer producto: ")
+        id2 = input("ID segundo producto: ")
+
+        if id1 not in self.productos or id2 not in self.productos:
+            print("Producto no encontrado")
+            return
+
+        p1 = self.productos[id1]
+        p2 = self.productos[id2]
+
+        print("\n===== COMPARACION =====")
+        print(f"{p1.nombre} vs {p2.nombre}")
+        print(f"Precio: ${p1.precio} vs ${p2.precio}")
+        print(f"Marca: {p1.marca} vs {p2.marca}")
+        print(f"Categoria: {p1.categoria} vs {p2.categoria}")
+
+    # =================================================
+    # CLIENTES
+    # =================================================
+
+    def registrar_cliente(self):
+
+        id_cliente = input("ID cliente: ")
+
+        if id_cliente in self.clientes:
+            print("Cliente ya existe")
+            return
+
+        nombre = input("Nombre: ")
+        email = input("Email: ")
+
+        self.clientes[id_cliente] = Cliente(
+            id_cliente,
+            nombre,
+            email
+        )
+
+        print("Cliente registrado")
+
+    def listar_clientes(self):
+
+        print("\n===== CLIENTES =====")
+
+        for cliente in self.clientes.values():
+            print(
+                f"ID:{cliente.id_cliente} | "
+                f"{cliente.nombre} | "
+                f"{cliente.email}"
+            )
+
+    # =================================================
+    # PEDIDOS
+    # =================================================
+
+    def crear_pedido(self):
+
+        id_cliente = input("ID cliente: ")
+
+        if id_cliente not in self.clientes:
+            print("Cliente no existe")
+            return
+
+        productos = input(
+            "IDs productos separados por coma: "
+        ).split(",")
+
+        total = 0
+
+        for id_producto in productos:
+
+            id_producto = id_producto.strip()
+
+            if id_producto not in self.productos:
+                print("Producto no existe:", id_producto)
+                return
+
+            producto = self.productos[id_producto]
+
+            if producto.stock <= 0:
+                print("Sin stock:", producto.nombre)
+                return
+
+            total += producto.precio
+
+        for id_producto in productos:
+            self.productos[id_producto.strip()].stock -= 1
+
+        pedido = Pedido(
+            self.contador_pedidos,
+            id_cliente,
+            productos
+        )
+
+        self.pedidos[self.contador_pedidos] = pedido
+
+        print(f"Pedido #{self.contador_pedidos} creado")
+        print("Total compra: $", total)
+
+        self.contador_pedidos += 1
+
+    # =================================================
+    # JSON
+    # =================================================
+
+    def guardar_json(self):
+
+        datos = {
+            "productos": [
+                p.to_dict()
+                for p in self.productos.values()
+            ],
+            "clientes": [
+                c.to_dict()
+                for c in self.clientes.values()
+            ],
+            "pedidos": [
+                p.to_dict()
+                for p in self.pedidos.values()
+            ]
+        }
+
+        with open(
+            "tienda_tecnologia.json",
+            "w",
+            encoding="utf-8"
+        ) as archivo:
+
+            json.dump(
+                datos,
+                archivo,
+                indent=4,
+                ensure_ascii=False
+            )
+
+        print("Datos guardados")
+
+    def cargar_json(self):
+
+        try:
+
+            with open(
+                "tienda_tecnologia.json",
+                "r",
+                encoding="utf-8"
+            ) as archivo:
+
+                datos = json.load(archivo)
+
+            self.productos.clear()
+
+            for p in datos["productos"]:
+
+                self.productos[p["id_producto"]] = Producto(
+                    p["id_producto"],
+                    p["nombre"],
+                    p["marca"],
+                    p["categoria"],
+                    p["precio"],
+                    p["stock"]
+                )
+
+            print("Datos cargados")
+
+        except FileNotFoundError:
+            print("Archivo no encontrado")
+
+
+# =====================================================
+# MENU PRINCIPAL
+# =====================================================
+
+def main():
+
+    sistema = SistemaGestion()
+    sistema.cargar_ejemplos()
+
+    while True:
+
+        print("\n==============================")
+        print(" TIENDA ONLINE TECNOLOGICA ")
+        print("==============================")
+        print("1. Registrar producto")
+        print("2. Actualizar producto")
+        print("3. Eliminar producto")
+        print("4. Buscar producto")
+        print("5. Listar productos")
+        print("6. Registrar cliente")
+        print("7. Listar clientes")
+        print("8. Crear pedido")
+        print("9. Comparar productos")
+        print("10. Guardar JSON")
+        print("11. Cargar JSON")
+        print("0. Salir")
+
+        opcion = input("Seleccione: ")
+
+        if opcion == "1":
+            sistema.registrar_producto()
+
+        elif opcion == "2":
+            sistema.actualizar_producto()
+
+        elif opcion == "3":
+            sistema.eliminar_producto()
+
+        elif opcion == "4":
+            sistema.buscar_producto()
+
+        elif opcion == "5":
+            sistema.listar_productos()
+
+        elif opcion == "6":
+            sistema.registrar_cliente()
+
+        elif opcion == "7":
+            sistema.listar_clientes()
+
+        elif opcion == "8":
+            sistema.crear_pedido()
+
+        elif opcion == "9":
+            sistema.comparar_productos()
+
+        elif opcion == "10":
+            sistema.guardar_json()
+
+        elif opcion == "11":
+            sistema.cargar_json()
+
+        elif opcion == "0":
+            print("Gracias por usar el sistema")
+            break
+
+        else:
+            print("Opcion invalida")
+
+
+if __name__ == "__main__":
+    main()
