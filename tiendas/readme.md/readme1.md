@@ -14,7 +14,6 @@ Transforman los datos de la memoria RAM en archivos de texto dentro del disco du
 o	🔄 Convierten los diccionarios en listas limpias usando list(valores).
 o	✍️ Usan json.dump con indent=4 para que el archivo sea legible.
 o	🔤 Aplican ensure_ascii=False para permitir tildes y la letra "ñ".
-o	⚠️ Usan except IOError para atrapar errores si el disco está protegido o lleno.
 •	📦 guardar_pedidos():
 o	🔄 Guarda la lista de pedidos y el estado actual del contador.
 o	🧠 Garantiza que el programa recuerde el último número de pedido al reiniciar.
