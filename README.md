@@ -1,5 +1,3 @@
-Aquí tienes el código completo del `README.md` actualizado, manteniendo a todos los integrantes, sin el campo `fecha_pedido` y habiendo retirado por completo la sección de la licencia:
-
 ```markdown
 # 🎯 Sistema de Gestión de Pedidos para una Tienda
 
@@ -29,20 +27,20 @@ El sistema permite gestionar de forma integral el núcleo operativo de un comerc
 El almacenamiento de la información se organiza a través de estructuras bien definidas dentro de los archivos JSON:
 
 1. **Productos:**
-   * `id_producto`: Identificador único.
-   * `nombre`: Nombre comercial del artículo.
-   * `precio`: Valor unitario.
-   * `stock`: Cantidad disponible en inventario.
+   * `id_producto`:
+   * `nombre`: 
+   * `precio`: 
+   * `stock`: 
 
 2. **Clientes:**
-   * `id_cliente`: Identificador único.
-   * `nombre`: Nombre completo del usuario.
-   * `email`: Dirección de correo electrónico.
+   * `id_cliente`:
+   * `nombre`: 
+   * `email`: 
 
 3. **Pedidos:**
-   * `id_pedido`: Identificador único de transacción.
-   * `id_cliente`: Asociación directa con el comprador.
-   * `id_productos`: Lista con los IDs de los productos adquiridos.
+   * `id_pedido`:
+   * `id_cliente`: 
+   * `id_productos`: 
 
 ---
 
